@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\RegistroResource\Pages;
+namespace App\Filament\Resources\DistritoResource\Pages;
 
-use App\Filament\Resources\RegistroResource;
+use App\Filament\Resources\DistritoResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditRegistro extends EditRecord
+class EditDistrito extends EditRecord
 {
-    protected static string $resource = RegistroResource::class;
+    protected static string $resource = DistritoResource::class;
 
     protected function getHeaderActions(): array
     {
