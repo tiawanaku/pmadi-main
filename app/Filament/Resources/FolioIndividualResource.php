@@ -33,25 +33,33 @@ class FolioIndividualResource extends Resource
                             ->label('Nombre Urbanización')
                             ->required(),
 
-                        Forms\Components\TextInput::make('codigo_catastral')
+                            Forms\Components\Radio::make('codigo_catastral')
                             ->label('Código Catastral')
-                            ->required(),
-
-                        Forms\Components\Radio::make('codigo_catastro_existe')
-                            ->label('¿Código Catastral?')
                             ->options([
-                                'si' => 'Sí',
                                 'no' => 'No',
+                                'si' => 'Sí',
                             ])
-                            ->inline(),
+                            ->inline()
+                            ->reactive(), // Forzar el refresco del estado al cambiar el valor
 
-                        Forms\Components\Select::make('estado_folio')
+                        // Campo adicional para Número de Catastro
+                        Forms\Components\TextInput::make('numero_catastro')
+                            ->label('Número de Catastro')
+                            ->visible(fn ($get) => $get('codigo_catastral') === 'si')
+                            ->placeholder('Ingrese el número de catastro'),
+
+                            Forms\Components\CheckboxList::make('estado_folio')
                             ->label('Estado Folio')
                             ->options([
-                                'activo' => 'Activo',
-                                'inactivo' => 'Inactivo',
+                                'reposicion' => 'Reposición',
+                                'actualizacion' => 'Actualización',
+                                'cambio_matricula' => 'Cambio a matrícula',
+                                'cambio_razon_social' => 'Cambio de razón social',
+                                'cambio_jurisdiccion' => 'Cambio de jurisdicción',
+                                'solicitud_tenes_perencia' => 'Solicitud de Tenes Perencia',
+                                'otro' => 'Otro',
                             ])
-                            ->required(),
+                            ->reactive(),
 
                         Forms\Components\Select::make('testimonio_id')
                             ->label('Testimonio')

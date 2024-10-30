@@ -15,7 +15,7 @@ return new class extends Migration
          Schema::create('testimonios', function (Blueprint $table) {
             $table->id('id_testimonio'); // Primary Key
             $table->string('nro_testimonio', 20); // Número de testimonio
-            $table->unsignedBigInteger('id_notario'); // Relación con tabla notarios
+            $table->unsignedBigInteger('id_notario')->nullable();// Relación con tabla notarios
             $table->unsignedBigInteger('id_distrito_judicial'); // Relación con distrito judicial
             $table->unsignedBigInteger('id_registro_notarial'); // Relación con registro notarial
             $table->text('descripcion_testimonio')->nullable(); // Descripción del testimonio
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->softDeletes();
 
             // Foreign Keys (Relaciones con otras tablas)
-            $table->foreign('id_notario')->references('id_notario')->on('notarios')->onDelete('cascade');
+            $table->foreign('id_notario')->references('id_notario')->on('notario')->onDelete('cascade');
             $table->foreign('id_distrito_judicial')->references('id_distrito_judicial')->on('distrito_judicial')->onDelete('cascade');
             $table->foreign('id_registro_notarial')->references('id_registro_notarial')->on('registro_notarial')->onDelete('cascade');
             $table->foreign('id_registrado_por')->references('id_registrado_por')->on('registrado_por')->onDelete('set null');

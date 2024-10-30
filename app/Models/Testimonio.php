@@ -17,6 +17,10 @@ class Testimonio extends Model
     // Permite la asignación masiva para el campo nro_testimonio
     protected $fillable = [
         'nro_testimonio', // Agrega 'nro_testimonio' a la lista de atributos asignables en masa
+
+
+
+
     ];
 
 
