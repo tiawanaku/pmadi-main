@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nro_notaria', 50);
             $table->timestamps();
         });
+
     }
 
     /**

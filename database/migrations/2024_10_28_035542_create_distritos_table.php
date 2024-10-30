@@ -12,12 +12,12 @@ class CreateDistritosTable extends Migration
      * @return void
      */
     public function up()
-    {
-        Schema::create('distritos', function (Blueprint $table) {
-            $table->id();  // Campo "id" como clave primaria autoincrementable
-            $table->string('nombre_distrito');  // Campo "nombre_distrito" de tipo string para almacenar el nombre del distrito
-            $table->timestamps();  // Campos "created_at" y "updated_at" automáticos
-        });
+    {Schema::create('distritos', function (Blueprint $table) {
+        $table->id('id_distrito'); // Esto define la columna como unsignedBigInteger y clave primaria
+        $table->string('nombre_distrito', 100);
+        $table->timestamps();
+    });
+
     }
 
     /**

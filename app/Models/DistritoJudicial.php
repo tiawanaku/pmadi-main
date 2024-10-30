@@ -9,6 +9,14 @@ class DistritoJudicial extends Model
 {
     use HasFactory;
 
-    protected $table = 'distrito_judicial'; // Ajusta el nombre correcto de la tabla aquí
-    protected $primaryKey = 'id_distrito_judicial'; // Asumiendo que esta es la clave primaria
+    protected $table = 'distritos';
+
+    // Define la clave primaria personalizada
+    protected $primaryKey = 'id_distrito';
+
+    // Si `id_distrito` no es autoincremental, desactiva $incrementing
+    public $incrementing = true;
+
+    // Si `id_distrito` es de tipo unsignedBigInteger, agrega la propiedad:
+    protected $keyType = 'unsignedBigInteger';
 }

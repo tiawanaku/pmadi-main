@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Folio extends Model
 {
     use HasFactory;
-
     protected $table = 'folio';
+    protected $primaryKey = 'id_folio';
+
+
 
     protected $fillable = [
         'gravamen',

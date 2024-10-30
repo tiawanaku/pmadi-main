@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tipo_registro', function (Blueprint $table) {
-            $table->id('id_tipo_registro');
-            $table->string('descripcion', 100);
+            $table->id(); // Crea 'id' como unsignedBigInteger y clave primaria automáticamente
             $table->timestamps();
         });
+
     }
 
     /**

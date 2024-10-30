@@ -16,8 +16,15 @@ class FolioGlobal extends Model
         'id_folio',
         'superficie_restante',
         'nombre_urb_anterior',
-    ];
-
+        'codigo_catastral',
+        'numero_catastro',
+        'estado_folio',
+        'otro_estado_folio',
+        'testimonio',
+   ];
+   protected $casts = [
+    'estado_folio' => 'array', // Laravel convertirá automáticamente JSON a array y viceversa
+];
     public function folio()
     {
         return $this->belongsTo(Folio::class, 'id_folio');

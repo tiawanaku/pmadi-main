@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('id_urb_actual');
             $table->string('nombre_urb_actual', 100);
             $table->unsignedBigInteger('id_distrito');
-            $table->foreign('id_distrito')->references('id_distrito')->on('distrito')->onDelete('cascade');
+            $table->foreign('id_distrito')->references('id_distrito')->on('distritos')->onDelete('cascade');
             $table->timestamps();
         });
     }

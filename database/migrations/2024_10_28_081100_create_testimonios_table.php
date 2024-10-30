@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Creación de la tabla testimonios
-        Schema::create('testimonios', function (Blueprint $table) {
+         // Creación de la tabla testimonios
+         Schema::create('testimonios', function (Blueprint $table) {
             $table->id('id_testimonio'); // Primary Key
             $table->string('nro_testimonio', 20); // Número de testimonio
             $table->unsignedBigInteger('id_notario'); // Relación con tabla notarios
@@ -21,12 +21,12 @@ return new class extends Migration
             $table->text('descripcion_testimonio')->nullable(); // Descripción del testimonio
             $table->unsignedBigInteger('id_registrado_por')->nullable(); // Registrado por
 
-            // Timestamps para control de creación y actualización
+            // Timestamps y eliminación lógica
             $table->timestamps();
-            $table->softDeletes(); // Para eliminación lógica
+            $table->softDeletes();
 
             // Foreign Keys (Relaciones con otras tablas)
-            $table->foreign('id_notario')->references('id_notario')->on('notario')->onDelete('cascade');
+            $table->foreign('id_notario')->references('id_notario')->on('notarios')->onDelete('cascade');
             $table->foreign('id_distrito_judicial')->references('id_distrito_judicial')->on('distrito_judicial')->onDelete('cascade');
             $table->foreign('id_registro_notarial')->references('id_registro_notarial')->on('registro_notarial')->onDelete('cascade');
             $table->foreign('id_registrado_por')->references('id_registrado_por')->on('registrado_por')->onDelete('set null');

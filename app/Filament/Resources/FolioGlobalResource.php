@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FolioGlobalResource\Pages;
 use App\Filament\Resources\FolioGlobalResource\RelationManagers;
+use App\Models\Folio;
 use App\Models\FolioGlobal;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -25,40 +26,66 @@ class FolioGlobalResource extends Resource
         ->schema([
             Forms\Components\Section::make('Crear Folio Global')
                 ->schema([
-                    Forms\Components\TextInput::make('nombre_folio_global')
-                        ->label('Nombre del Folio Global')
+                    Forms\Components\Select::make('id_urb_actual')
+                    ->label('Nombre de la Urbanización')
+                    ->options(\App\Models\UrbanizacionActual::all()->pluck('nombre_urb_actual', 'id_urb_actual'))
+                    ->required(),
+                    // Número de Folio Global
+                    Forms\Components\TextInput::make('numero_folio_global')
+                        ->label('Número de Folio Global')
                         ->required(),
 
-                    Forms\Components\Select::make('nombre_urbanizacion')
-                        ->label('Nombre de la Urbanización')
-                        ->options([
-                            // Opciones predefinidas o conexión a un modelo
-                        ])
-                        ->required(),
-
-                    Forms\Components\TextInput::make('nombre_anterior')
+                    // Nombre de la Urbanización
+                    Forms\Components\Select::make('id_folio')
+                    ->label('Nombre de la Urbanización')
+                    ->options(Folio::all()->pluck('nombre', 'id_folio')) // Asegúrate de que 'id_folio' sea el segundo parámetro para enviar el ID
+                    ->required(),
+                    // Nombre Anterior
+                    Forms\Components\TextInput::make('nombre_urb_anterior')
                         ->label('Nombre Anterior'),
 
-                    Forms\Components\TextInput::make('superficie')
-                        ->label('Superficie'),
+                    // Superficie
+                    Forms\Components\TextInput::make('superficie_restante')
+                        ->label('Superficie')
+                        ->numeric(),
 
-                    Forms\Components\TextInput::make('codigo_catastral')
-                        ->label('Código Catastral'),
+                    // Código Catastral (con opción de sí/no) y forzar refresco con reactive()
+                    Forms\Components\Radio::make('codigo_catastral')
+                        ->label('Código Catastral')
+                        ->options([
+                            'no' => 'No',
+                            'si' => 'Sí',
+                        ])
+                        ->inline()
+                        ->reactive(), // Forzar el refresco del estado al cambiar el valor
 
-                    Forms\Components\Toggle::make('web')
-                        ->label('Web')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->inlineLabel(true),
+                    // Campo adicional para Número de Catastro
+                    Forms\Components\TextInput::make('numero_catastro')
+                        ->label('Número de Catastro')
+                        ->visible(fn ($get) => $get('codigo_catastral') === 'si')
+                        ->placeholder('Ingrese el número de catastro'),
 
-                    Forms\Components\Radio::make('estado_folio')
+                    // Estado del Folio (con múltiples opciones de tipo checkbox)
+                    Forms\Components\CheckboxList::make('estado_folio')
                         ->label('Estado Folio')
                         ->options([
-                            'si' => 'Sí es otro',
-                            'no' => 'No es otro',
+                            'reposicion' => 'Reposición',
+                            'actualizacion' => 'Actualización',
+                            'cambio_matricula' => 'Cambio a matrícula',
+                            'cambio_razon_social' => 'Cambio de razón social',
+                            'cambio_jurisdiccion' => 'Cambio de jurisdicción',
+                            'solicitud_tenes_perencia' => 'Solicitud de Tenes Perencia',
+                            'otro' => 'Otro',
                         ])
-                        ->inline(),
+                        ->reactive(), // Forzar actualización inmediata para que se detecte la selección de "Otro"
 
+                    // Campo adicional para "Especificar Otro"
+                    Forms\Components\TextInput::make('otro_estado_folio')
+                        ->label('Especificar Otro')
+                        ->visible(fn ($get) => in_array('otro', $get('estado_folio') ?? [])) // Solo visible si "Otro" está seleccionado
+                        ->placeholder('Ingrese otro estado de folio'),
+
+                    // Testimonio
                     Forms\Components\Textarea::make('testimonio')
                         ->label('Testimonio'),
                 ]),
@@ -83,9 +110,6 @@ class FolioGlobalResource extends Resource
 
                 Tables\Columns\TextColumn::make('codigo_catastral')
                     ->label('Código Catastral'),
-
-                Tables\Columns\BooleanColumn::make('web')
-                    ->label('Web'),
 
                 Tables\Columns\TextColumn::make('estado_folio')
                     ->label('Estado Folio'),

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\Urbanizacion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,16 +9,15 @@ class Distrito extends Model
 {
     use HasFactory;
 
-    // Nombre de la tabla
     protected $table = 'distritos';
 
-    // Definir los campos que pueden ser llenados
-    protected $fillable = ['nombre_distrito'];
+    // Especifica los campos que se pueden asignar de manera masiva
+    protected $fillable = [
+        'nombre_distrito',
+    ];
 
-    // Relación hasMany con el modelo Urbanizacion
-    public function urbanizaciones()
-    {
-        // Un distrito tiene muchas urbanizaciones
-        return $this->hasMany(Urbanizacion::class, 'id_distrito');
-    }
+    // Define la clave primaria si no es "id"
+    protected $primaryKey = 'id_distrito';
+
+    // No necesitas definir ningún "cast" para unsignedBigInteger.
 }

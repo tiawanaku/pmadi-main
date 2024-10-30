@@ -13,7 +13,7 @@ class Denominacion extends Model
 
     public function testimonios()
     {
-        return $this->belongsToMany(Testimonio::class, 'union_testimonio_denominacion', 'id_denominacion', 'id_testimonio');
+        return $this->belongsToMany(Testimonio::class, '_testimonio_denominacion', 'id_denominacion', 'id_testimonio');
     }
 }
 
