@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Creación de la tabla notarios
         Schema::create('notarios', function (Blueprint $table) {
-            $table->id('id_notario');
+            $table->id('id_notario'); // Usar 'id_notario' como clave primaria
             $table->string('nombre_completo', 100);
             $table->string('nro_notaria', 50);
             $table->timestamps();
         });
-
     }
 
     /**
@@ -25,6 +25,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notario');
+        // Verificar si la tabla 'testimonios' y la clave foránea existen antes de intentar eliminar
+        if (Schema::hasTable('testimonios')) {
+            Schema::table('testimonios', function (Blueprint $table) {
+                // Solo intentamos eliminar la clave foránea si existe la columna 'id_notario'
+                if (Schema::hasColumn('testimonios', 'id_notario')) {
+                    $table->dropForeign(['id_notario']); // Eliminar la clave foránea
+                    $table->dropColumn('id_notario');    // Eliminar la columna
+                }
+            });
+        }
+
+        Schema::dropIfExists('notarios'); // Elimina la tabla 'notarios'
     }
 };

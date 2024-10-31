@@ -15,9 +15,9 @@ return new class extends Migration
          Schema::create('testimonios', function (Blueprint $table) {
             $table->id('id_testimonio'); // Primary Key
             $table->string('nro_testimonio', 20); // Número de testimonio
-            $table->unsignedBigInteger('id_notario')->nullable();// Relación con tabla notarios
-            $table->unsignedBigInteger('id_distrito_judicial'); // Relación con distrito judicial
-            $table->unsignedBigInteger('id_registro_notarial'); // Relación con registro notarial
+            $table->unsignedBigInteger('id_notario')->nullable(); // Relación con tabla notarios
+            $table->string('distrito_judicial', 50); // Campo como string sin relación
+            $table->string('registro_notarial', 50); // Campo como string sin relación
             $table->text('descripcion_testimonio')->nullable(); // Descripción del testimonio
             $table->unsignedBigInteger('id_registrado_por')->nullable(); // Registrado por
 
@@ -26,9 +26,7 @@ return new class extends Migration
             $table->softDeletes();
 
             // Foreign Keys (Relaciones con otras tablas)
-            $table->foreign('id_notario')->references('id_notario')->on('notario')->onDelete('cascade');
-            $table->foreign('id_distrito_judicial')->references('id_distrito_judicial')->on('distrito_judicial')->onDelete('cascade');
-            $table->foreign('id_registro_notarial')->references('id_registro_notarial')->on('registro_notarial')->onDelete('cascade');
+            $table->foreign('id_notario')->references('id_notario')->on('notarios')->onDelete('cascade'); // Cambiado a 'notarios'
             $table->foreign('id_registrado_por')->references('id_registrado_por')->on('registrado_por')->onDelete('set null');
         });
 

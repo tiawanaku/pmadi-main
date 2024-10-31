@@ -1,29 +1,31 @@
 <?php
-// app/Models/Testimonio.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Testimonio extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'testimonios';
     protected $primaryKey = 'id_testimonio'; // Cambia la clave primaria a 'id_testimonio'
     public $incrementing = true; // Asegura que el campo sea auto-incremental si es necesario
     protected $keyType = 'int'; // Define el tipo de dato de la clave primaria
 
-    // Permite la asignación masiva para el campo nro_testimonio
+    // Permite la asignación masiva para los atributos especificados
     protected $fillable = [
-        'nro_testimonio', // Agrega 'nro_testimonio' a la lista de atributos asignables en masa
-
-
-
-
+        'nro_testimonio',
+        'id_notario',
+        'id_distrito_judicial',
+        'id_registro_notarial',
+        'descripcion_testimonio',
+        'id_registrado_por'
     ];
 
-
+    // Relaciones
     public function notario()
     {
         return $this->belongsTo(Notario::class, 'id_notario');
@@ -41,7 +43,7 @@ class Testimonio extends Model
 
     public function registradoPor()
     {
-        return $this->belongsTo(RegistradoPor::class, 'id_registrado_por');
+        return $this->belongsTo(User::class, 'id_registrado_por');
     }
 
     public function denominaciones()
