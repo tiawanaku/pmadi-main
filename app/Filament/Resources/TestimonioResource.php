@@ -51,7 +51,7 @@ class TestimonioResource extends Resource
                                 ->disabled()
                                 ->required(),
 
-                            Select::make('id_distrito_judicial')
+                            Select::make('distrito_judicial')
                                 ->label('Distrito Judicial')
                                 ->options([
                                     'distritojudicial1' => 'La Paz',
@@ -59,7 +59,7 @@ class TestimonioResource extends Resource
                                 ])
                                 ->required(),
 
-                            Select::make('id_registro_notarial')
+                            Select::make('registro_notarial')
                                 ->label('Registro Notarial')
                                 ->options([
                                     'registronotarial1' => 'Notaría de Fe Pública',
@@ -74,15 +74,23 @@ class TestimonioResource extends Resource
                                 ->label('Descripción')
                                 ->required(),
 
-                            Select::make('id_registrado_por')
-                                ->label('Registrado Por')
+                                Forms\Components\CheckboxList::make('registrado_por')
+                                ->label('Registrado por')
                                 ->options([
-                                    'registradopor1' => 'Ley Municipal',
-                                    'registradopor2' => 'Adjudicación',
-                                    'registradopor3' => 'Expropiación',
-                                    'registradopor4' => 'Cesión de áreas',
+                                    'ley_municipal' => 'Ley Municipal',
+                                    'adjudicacion' => 'Adjudicacion',
+                                    'expropiacion' => 'Expropiacion',
+                                    'cesion_de_areas' => 'Cesion de areas',
+
+                                    'otro' => 'Otro',
                                 ])
-                                ->nullable(),
+                                ->reactive(), // Forzar actualización inmediata para que se detecte la selección de "Otro"
+
+                            // Campo adicional para "Especificar Otro"
+                            Forms\Components\TextInput::make('otro_registrado_testimonio')
+                                ->label('Especificar Otro')
+                                ->visible(fn ($get) => in_array('otro', $get('registrado_por') ?? [])) // Solo visible si "Otro" está seleccionado
+                                ->placeholder('Ingrese otro motivo de registro'),
 
                             Select::make('denominaciones')
                                 ->label('Denominación')
@@ -93,13 +101,19 @@ class TestimonioResource extends Resource
                                 ])
                                 ->multiple(),
 
-                            Select::make('estadoTestimonios')
-                                ->label('Estado del Testimonio')
+                                Forms\Components\CheckboxList::make('estado_testimonio')
+                                ->label('Estado Testimonio')
                                 ->options([
-                                    'estado1' => 'Reposición',
-                                    'estado2' => '2do traslado',
+                                    'reposicion' => 'Reposición',
+                                    'segundo_traslado' => 'Segundo traslado',
+
+                                    'otro' => 'Otro',
                                 ])
-                                ->multiple(),
+                                ->reactive(),
+                                Forms\Components\TextInput::make('otro_estado_testimonio')
+                                ->label('Especificar Otro')
+                                ->visible(fn ($get) => in_array('otro', $get('estado_testimonio') ?? [])) // Solo visible si "Otro" está seleccionado
+                                ->placeholder('Ingrese otro estado de testimonio'),
                         ]),
                 ])->columnSpanFull(),
             ]);

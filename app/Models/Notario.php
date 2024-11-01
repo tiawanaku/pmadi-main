@@ -13,6 +13,9 @@ class Notario extends Model
     public $incrementing = true;
     protected $keyType = 'int';
 
+
+
+
     protected $fillable = ['nombre_completo', 'nro_notaria'];
 }
 

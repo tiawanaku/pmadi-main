@@ -19,10 +19,10 @@ class Testimonio extends Model
     protected $fillable = [
         'nro_testimonio',
         'id_notario',
-        'id_distrito_judicial',
-        'id_registro_notarial',
+        'distrito_judicial',
+        'registro_notarial',
         'descripcion_testimonio',
-        'id_registrado_por'
+        'registrado_por'
     ];
 
     // Relaciones
@@ -30,21 +30,14 @@ class Testimonio extends Model
     {
         return $this->belongsTo(Notario::class, 'id_notario');
     }
+    protected $casts = [
+        'registrado_por' => 'array',
+        'estado_testimonio' => 'array',
+    ];
 
-    public function distritoJudicial()
-    {
-        return $this->belongsTo(DistritoJudicial::class, 'id_distrito_judicial');
-    }
 
-    public function registroNotarial()
-    {
-        return $this->belongsTo(RegistroNotarial::class, 'id_registro_notarial');
-    }
 
-    public function registradoPor()
-    {
-        return $this->belongsTo(User::class, 'id_registrado_por');
-    }
+
 
     public function denominaciones()
     {
@@ -54,5 +47,11 @@ class Testimonio extends Model
     public function estados()
     {
         return $this->belongsToMany(EstadoTestimonio::class, 'union_estado_testimonio', 'id_testimonio', 'id_estado_testimonio');
+    }
+
+
+    public function registro()
+    {
+        return $this->belongsToMany(RegistradoPor::class, 'union_registrado_testimonio', 'id_testimonio', 'id_registrado_por');
     }
 }
