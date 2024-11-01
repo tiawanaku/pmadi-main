@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('folio', function (Blueprint $table) {
-            $table->id('id_folio');
+            $table->increments('id_folio'); // Clave primaria como `unsigned integer`
             $table->boolean('gravamen');
             $table->decimal('superficie', 10, 2);
             $table->string('cod_catastral', 100);
             $table->string('nro_folio', 50);
             $table->unsignedBigInteger('id_tipo_registro');
-            $table->unsignedBigInteger('id_urb_actual'); // Definir como unsignedBigInteger para la clave foránea
+            $table->unsignedBigInteger('id_urb_actual');
             $table->unsignedBigInteger('id_testimonio');
 
-            // Claves foráneas
+            // Claves foráneas hacia otras tablas
             $table->foreign('id_urb_actual')->references('id_urb_actual')->on('urbanizacion_actual')->onDelete('cascade');
             $table->foreign('id_tipo_registro')->references('id')->on('tipo_registro')->onDelete('cascade');
             $table->foreign('id_testimonio')->references('id_testimonio')->on('testimonios')->onDelete('cascade');

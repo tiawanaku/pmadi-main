@@ -12,11 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('union_estado_folio', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_folio');
-            $table->unsignedBigInteger('id_estado_folio');
-            $table->primary(['id_folio', 'id_estado_folio']);
+            // Clave foránea hacia `folio`
+            $table->unsignedInteger('id_folio'); // Debe coincidir con el tipo en `folio`
             $table->foreign('id_folio')->references('id_folio')->on('folio')->onDelete('cascade');
+
+            // Clave foránea hacia `estado_folio`
+            $table->unsignedBigInteger('id_estado_folio'); // Debe coincidir con el tipo en `estado_folio`
             $table->foreign('id_estado_folio')->references('id_estado_folio')->on('estado_folio')->onDelete('cascade');
+
+            // Clave primaria compuesta
+            $table->primary(['id_folio', 'id_estado_folio']);
         });
     }
 

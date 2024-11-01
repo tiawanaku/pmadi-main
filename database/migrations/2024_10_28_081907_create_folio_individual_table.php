@@ -12,11 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('folio_individual', function (Blueprint $table) {
-            $table->id('id_folio_individual');
-            $table->unsignedBigInteger('id_folio');
-            $table->unsignedBigInteger('id_folio_global');
+            $table->id('id_folio_individual'); // Clave primaria autoincremental para `folio_individual`
+
+            // Clave foránea hacia `folio`
+            $table->unsignedInteger('id_folio'); // Debe coincidir con el tipo en `folio`
             $table->foreign('id_folio')->references('id_folio')->on('folio')->onDelete('cascade');
+
+            // Clave foránea hacia `folio_global`
+            $table->unsignedBigInteger('id_folio_global'); // Debe coincidir con el tipo en `folio_global`
             $table->foreign('id_folio_global')->references('id_folio_global')->on('folio_global')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

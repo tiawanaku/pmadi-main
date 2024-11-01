@@ -10,8 +10,7 @@ class Folio extends Model
     use HasFactory;
     protected $table = 'folio';
     protected $primaryKey = 'id_folio';
-
-
+    public $incrementing = true;
 
     protected $fillable = [
         'gravamen',

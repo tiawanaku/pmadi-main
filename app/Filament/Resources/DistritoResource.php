@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use ArberMustafa\FilamentLocationPickrField\Forms\Components\LocationPickr;
 
 class DistritoResource extends Resource
 {
@@ -28,6 +29,9 @@ class DistritoResource extends Resource
                 ->required()
                 ->label('Nombre del Distrito') // Etiqueta para el campo
                 ->maxLength(255),
+
+            // Agregar el campo de ubicación utilizando LocationPickr
+            LocationPickr::make('location'),
         ]);
     }
 
@@ -52,7 +56,6 @@ class DistritoResource extends Resource
             ]);
     }
 
-
     public static function getPages(): array
     {
 
@@ -61,5 +64,5 @@ class DistritoResource extends Resource
             'create' => Pages\CreateDistrito::route('/create'),
             'edit' => Pages\EditDistrito::route('/{record}/edit'),
         ];
-}
+    }
 }
