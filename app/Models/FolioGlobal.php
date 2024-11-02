@@ -29,4 +29,10 @@ class FolioGlobal extends Model
     {
         return $this->belongsTo(Folio::class, 'id_folio');
     }
+
+
+    public function urbanizacionActual()
+    {
+        return $this->belongsTo(UrbanizacionActual::class, 'id_urb_actual');
+    }
 }

@@ -22,16 +22,21 @@ class UrbanizacionActualResource extends Resource
     public static function form(Forms\Form $form): Forms\Form
     {
         return $form
-            ->schema([
-                TextInput::make('nombre_urb_actual')
-                    ->label('Nombre de la Urbanización')
-                    ->required(),
+        ->schema([
+            TextInput::make('nombre_urb_actual')
+                ->label('Nombre de la Urbanización')
+                ->required()
+                ->maxLength(100)
+                ->helperText('El nombre debe ser único en el distrito y se guardará en mayúsculas sin espacios adicionales.')
+                ->rules([
+                    'unique:urbanizacion_actual,nombre_urb_actual,NULL,id,id_distrito,'.request()->get('id_distrito')
+                ]),
 
-                Select::make('id_distrito')
-                    ->label('Distrito')
-                    ->relationship('distrito', 'nombre_distrito')
-                    ->required(),
-            ]);
+            Select::make('id_distrito')
+                ->relationship('distrito', 'nombre_distrito')
+                ->label('Distrito')
+                ->required(),
+        ]);
     }
 
     public static function table(Tables\Table $table): Tables\Table

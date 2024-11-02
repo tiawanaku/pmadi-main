@@ -22,5 +22,11 @@ class Folio extends Model
         'id_urb_actual',
         'id_testimonio',
     ];
+
+
+    public function urbanizacionActual()
+    {
+        return $this->belongsTo(UrbanizacionActual::class, 'id_urb_actual');
+    }
 }
 
