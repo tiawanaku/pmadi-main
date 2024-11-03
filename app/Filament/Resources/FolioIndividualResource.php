@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FolioIndividualResource\Pages;
 use App\Models\FolioIndividual;
+use App\Models\FolioGlobal;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -23,46 +24,73 @@ class FolioIndividualResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Crear Folio Individual')
+                Forms\Components\Section::make('Crear Folio Global')
                     ->schema([
-                        Forms\Components\TextInput::make('numero_folio')
-                            ->label('No. Folio Individual')
+                        Forms\Components\TextInput::make('numero_folio_individual')
+                            ->label('Número de Folio Individual')
                             ->required(),
 
-                        Forms\Components\TextInput::make('nombre_urbanizacion')
-                            ->label('Nombre Urbanización')
-                            ->required(),
+                        // Campo de Selección para Folio Global
+                        Forms\Components\Select::make('id_folio_global')
+                            ->label('Número de Folio Global al que Pertenece')
+                            ->options(FolioGlobal::pluck('codigo_catastral', 'id_folio_global')) // Usar `codigo_catastral` como identificador
+                            ->required()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                // Buscar el folio global y obtener `nombre_urb_anterior` si existe
+                                $folioGlobal = FolioGlobal::find($state);
+                                if ($folioGlobal && $folioGlobal->nombre_urb_anterior) {
+                                    $set('nombre_urb_actual', $folioGlobal->nombre_urb_anterior);
+                                } else {
+                                    // Si no se encuentra o no tiene `nombre_urb_anterior`, limpiar el campo
+                                    $set('nombre_urb_actual', null);
+                                }
+                            }),
 
-                        Forms\Components\TextInput::make('codigo_catastral')
+                        // Campo que muestra el nombre de la urbanización desde `nombre_urb_anterior` de `FolioGlobal`
+                        Forms\Components\TextInput::make('nombre_urb_actual')
+                            ->label('Nombre de la Urbanización')
+                            ->disabled()
+                            ->placeholder('Seleccione un Folio Global para autocompletar'),
+
+                        Forms\Components\Radio::make('codigo_catastral')
                             ->label('Código Catastral')
-                            ->required(),
-
-                        Forms\Components\Radio::make('codigo_catastro_existe')
-                            ->label('¿Código Catastral?')
                             ->options([
-                                'si' => 'Sí',
                                 'no' => 'No',
+                                'si' => 'Sí',
                             ])
-                            ->inline(),
+                            ->inline()
+                            ->reactive()
+                            ->disabled(fn ($get) => !$get('id_folio_global')),
 
-                        Forms\Components\Select::make('estado_folio')
+                        Forms\Components\TextInput::make('numero_catastro')
+                            ->label('Número de Catastro')
+                            ->hidden(fn ($get) => $get('codigo_catastral') !== 'si' || !$get('id_folio_global'))
+                            ->placeholder('Ingrese el número de catastro'),
+
+                        Forms\Components\CheckboxList::make('estado_folio')
                             ->label('Estado Folio')
                             ->options([
-                                'activo' => 'Activo',
-                                'inactivo' => 'Inactivo',
+                                'reposicion' => 'Reposición',
+                                'actualizacion' => 'Actualización',
+                                'cambio_matricula' => 'Cambio a matrícula',
+                                'cambio_razon_social' => 'Cambio de razón social',
+                                'cambio_jurisdiccion' => 'Cambio de jurisdicción',
+                                'solicitud_tenes_perencia' => 'Solicitud de Tenes Perencia',
+                                'otro' => 'Otro',
                             ])
-                            ->required(),
+                            ->reactive()
+                            ->disabled(fn ($get) => !$get('id_folio_global')),
 
-                        Forms\Components\Select::make('testimonio_id')
+                        Forms\Components\TextInput::make('otro_estado_folio')
+                            ->label('Especificar Otro')
+                            ->visible(fn ($get) => in_array('otro', $get('estado_folio') ?? []) && $get('id_folio_global'))
+                            ->placeholder('Ingrese otro estado de folio'),
+
+                        Forms\Components\Textarea::make('testimonio')
                             ->label('Testimonio')
-                            ->relationship('testimonio', 'nro_testimonio')
-                            ->required(),
-                    ])
-                    ->columns(2),
-
-                Forms\Components\Textarea::make('observacion')
-                    ->label('Observación')
-                    ->columnSpan('full'),
+                            ->disabled(fn ($get) => !$get('id_folio_global')),
+                    ]),
             ]);
     }
 
@@ -70,18 +98,25 @@ class FolioIndividualResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('numero_folio')
-                    ->label('No. Folio Individual'),
-                Tables\Columns\TextColumn::make('nombre_urbanizacion')
-                    ->label('Nombre Urbanización'),
+                Tables\Columns\TextColumn::make('numero_folio_individual')
+                    ->label('Número de Folio Individual'),
+
+                Tables\Columns\TextColumn::make('id_folio_global')
+                    ->label('Número de Folio Global al que Pertenece'),
+
+                Tables\Columns\TextColumn::make('nombre_urb_actual')
+                    ->label('Nombre de la Urbanización'),
+
                 Tables\Columns\TextColumn::make('codigo_catastral')
                     ->label('Código Catastral'),
+
                 Tables\Columns\TextColumn::make('estado_folio')
-                    ->label('Estado Folio'),
-                Tables\Columns\TextColumn::make('testimonio.nro_testimonio')
+                    ->label('Estado Folio')
+                    ->formatStateUsing(fn ($state) => is_array($state) ? implode(', ', $state) : $state),
+
+                Tables\Columns\TextColumn::make('testimonio')
                     ->label('Testimonio'),
-            ])
-            ->filters([]);
+            ]);
     }
 
     public static function getRelations(): array
