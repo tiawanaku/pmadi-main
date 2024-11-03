@@ -4,35 +4,27 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateFolioGlobalTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('folio_global', function (Blueprint $table) {
             $table->id('id_folio_global');
-            $table->unsignedBigInteger('id_folio');
-            $table->decimal('superficie_restante', 10, 2);
-            $table->string('nombre_urb_anterior', 100);
-            $table->string('codigo_catastral')->nullable();
-            $table->string('numero_catastro')->nullable();
-            $table->json('estado_folio')->nullable(); // Cambia el tipo a JSON para almacenar arrays
-            $table->string('otro_estado_folio')->nullable();
-            $table->text('testimonio')->nullable();
+            $table->unsignedInteger('id_folio');
+            $table->float('superficie_restante')->nullable();
+            $table->string('nombre_urb_anterior')->nullable();
             $table->timestamps();
 
-            // Clave foránea a la tabla folio
+            // relación con `folio`
             $table->foreign('id_folio')->references('id_folio')->on('folio')->onDelete('cascade');
+
+            // `id_folio_individual` sin la relación en este paso
+            $table->unsignedBigInteger('id_folio_individual')->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('folio_global');
     }
-};
+}

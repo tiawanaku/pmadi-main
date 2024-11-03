@@ -1,5 +1,4 @@
 <?php
-// app/Models/Denominacion.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,11 +8,12 @@ class Denominacion extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre']; // Ajusta según los campos de la tabla
+    protected $table = 'denomination';
+    protected $primaryKey = 'id_denominacion';
 
     public function testimonios()
     {
-        return $this->belongsToMany(Testimonio::class, '_testimonio_denominacion', 'id_denominacion', 'id_testimonio');
+        return $this->belongsToMany(Testimonio::class, 'union_testimonio_denominacion', 'id_denominacion', 'id_testimonio');
     }
 }
 

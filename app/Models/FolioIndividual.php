@@ -12,8 +12,8 @@ class FolioIndividual extends Model
     protected $table = 'folio_individual';
 
     protected $fillable = [
-        'numero_folio',
-        'nombre_urbanizacion',
+        'nro_folio',
+        'nombre_urb_actual',
         'codigo_catastral',
         'codigo_catastro_existe',
         'estado_folio',
@@ -21,8 +21,14 @@ class FolioIndividual extends Model
         'observacion',
     ];
 
+    protected $casts = [
+        'estado_folio' => 'array', // convierte estado_folio a array si es de tipo JSON
+    ];
+
+    // relación con Testimonio
     public function testimonio()
     {
-        return $this->belongsTo(Testimonio::class, 'testimonio_id');
+        // si la clave primaria en testimonios es 'id_testimonio', use este ajuste
+        return $this->belongsTo(Testimonio::class, 'testimonio_id', 'id_testimonio');
     }
 }

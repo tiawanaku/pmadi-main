@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TestimonioResource\Pages;
@@ -12,8 +11,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
+use App\Models\EstadoTestimonio;
+use App\Models\RegistradoPor;
+use App\Models\Denominacion;
 
 class TestimonioResource extends Resource
 {
@@ -41,7 +44,7 @@ class TestimonioResource extends Resource
                                 ->searchable()
                                 ->placeholder('Seleccione o busque el notario')
                                 ->required()
-                                ->reactive() // Reactivo para actualizarse solo
+                                ->reactive()
                                 ->afterStateUpdated(function ($set, $state) {
                                     $set('nro_notaria', Notario::find($state)?->nro_notaria);
                                 }),
@@ -74,45 +77,37 @@ class TestimonioResource extends Resource
                                 ->label('Descripción')
                                 ->required(),
 
-                                Forms\Components\CheckboxList::make('registrado_por')
+                            // Relación de muchos a muchos con "Registrado por"
+                            CheckboxList::make('registrado_por')
                                 ->label('Registrado por')
-                                ->options([
-                                    'ley_municipal' => 'Ley Municipal',
-                                    'adjudicacion' => 'Adjudicacion',
-                                    'expropiacion' => 'Expropiacion',
-                                    'cesion_de_areas' => 'Cesion de areas',
+                                ->relationship('registros', 'descripcion') // Relación de muchos a muchos con registrado_por
+                                ->options(RegistradoPor::all()->pluck('descripcion', 'id_registrado_por'))
+                                ->reactive()
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    if (in_array(RegistradoPor::where('descripcion', 'Otro')->first()->id_registrado_por, $state)) {
+                                        $set('otro_registrado_testimonio', true);
+                                    } else {
+                                        $set('otro_registrado_testimonio', false);
+                                    }
+                                }),
 
-                                    'otro' => 'Otro',
-                                ])
-                                ->reactive(), // Forzar actualización inmediata para que se detecte la selección de "Otro"
-
-                            // Campo adicional para "Especificar Otro"
-                            Forms\Components\TextInput::make('otro_registrado_testimonio')
-                                ->label('Especificar Otro')
-                                ->visible(fn ($get) => in_array('otro', $get('registrado_por') ?? [])) // Solo visible si "Otro" está seleccionado
-                                ->placeholder('Ingrese otro motivo de registro'),
-
+                            // Relación de muchos a muchos con "Denominaciones"
                             Select::make('denominaciones')
                                 ->label('Denominación')
-                                ->options([
-                                    'denominacion1' => 'Equipamiento',
-                                    'denominacion2' => 'Áreas Verdes',
-                                    'denominacion3' => 'Vías',
-                                ])
-                                ->multiple(),
+                                ->relationship('denominaciones', 'descripcion') // Relación de muchos a muchos con denominaciones
+                                ->multiple()
+                                ->required(),
 
-                                Forms\Components\CheckboxList::make('estado_testimonio')
+                            // Relación de muchos a muchos con "Estado Testimonio"
+                            CheckboxList::make('estado_testimonio')
                                 ->label('Estado Testimonio')
-                                ->options([
-                                    'reposicion' => 'Reposición',
-                                    'segundo_traslado' => 'Segundo traslado',
-
-                                    'otro' => 'Otro',
-                                ])
+                                ->relationship('estados', 'descripcion') // Relación de muchos a muchos con estado_testimonio
                                 ->reactive(),
-                                Forms\Components\TextInput::make('otro_estado_testimonio')
+
+                            // Campo adicional para "Especificar Otro Estado"
+                            TextInput::make('otro_estado_testimonio')
                                 ->label('Especificar Otro')
-                                ->visible(fn ($get) => in_array('otro', $get('estado_testimonio') ?? [])) // Solo visible si "Otro" está seleccionado
+                                ->visible(fn ($get) => in_array(EstadoTestimonio::where('descripcion', 'Otro')->first()->id_estado_testimonio, $get('estado_testimonio') ?? []))
                                 ->placeholder('Ingrese otro estado de testimonio'),
                         ]),
                 ])->columnSpanFull(),
@@ -127,13 +122,10 @@ class TestimonioResource extends Resource
                     ->label('Número de Testimonio'),
                 Tables\Columns\TextColumn::make('notario.nombre_completo')
                     ->label('Notario'),
-                Tables\Columns\TextColumn::make('distritoJudicial.denominacion')
+                Tables\Columns\TextColumn::make('distritoJudicial')
                     ->label('Distrito Judicial'),
-                Tables\Columns\TextColumn::make('registroNotarial.descripcion')
+                Tables\Columns\TextColumn::make('registroNotarial')
                     ->label('Registro Notarial'),
-            ])
-            ->filters([
-                //
             ]);
     }
 
